@@ -8,6 +8,7 @@ require('dotenv').config();
 // Import routes
 const authRoutes = require('./routes/auth');
 const googleAuthRoutes = require('./routes/googleAuth');
+const aiRoutes = require('./routes/aiRoutes'); // ← Pastikan ini ada
 
 // Passport config
 require('./config/passport');
@@ -17,7 +18,7 @@ const app = express();
 // Connect to database
 connectDB();
 
-// CORS Configuration - PERBAIKI INI
+// CORS Configuration
 app.use(cors({
   origin: ['http://localhost:5173', 'http://127.0.0.1:5173'],
   credentials: true,
@@ -35,8 +36,8 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   cookie: { 
-    secure: false, // Set true if using HTTPS
-    maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    secure: false,
+    maxAge: 24 * 60 * 60 * 1000
   }
 }));
 
@@ -44,17 +45,18 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Routes
+// Routes - PASTIKAN URUTAN INI
 app.use('/api/auth', authRoutes);
 app.use('/api/auth', googleAuthRoutes);
+app.use('/api/ai', aiRoutes); // ← AI routes harus setelah auth
 
-// Test route dengan CORS headers manual
+// Test route
 app.get('/api/test', (req, res) => {
   res.json({ 
     success: true,
     message: '🚀 Server is running with CORS!',
     timestamp: new Date().toISOString(),
-    frontend: 'Should connect from localhost:5173'
+    routes: ['/api/auth', '/api/ai']
   });
 });
 
@@ -69,14 +71,23 @@ app.get('/api/health', (req, res) => {
     server: 'running',
     database: states[dbState],
     environment: process.env.NODE_ENV,
-    port: process.env.PORT,
-    cors: 'enabled for localhost:5173'
+    port: process.env.PORT
+  });
+});
+
+// AI Health check (public endpoint)
+app.get('/api/ai/health', (req, res) => {
+  res.json({
+    success: true,
+    message: 'AI Prediction Service is running',
+    timestamp: new Date().toISOString(),
+    supported_coins: ['BTC', 'ETH', 'BNB', 'ADA', 'SOL']
   });
 });
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, '0.0.0.0', () => { // ← Tambahkan '0.0.0.0' di sini
+app.listen(PORT, '0.0.0.0', () => {
   console.log('='.repeat(50));
   console.log('🚀 CRYPTO PREDICTION APP BACKEND');
   console.log('='.repeat(50));
@@ -88,4 +99,5 @@ app.listen(PORT, '0.0.0.0', () => { // ← Tambahkan '0.0.0.0' di sini
   console.log(`✅ Server: http://localhost:${PORT}`);
   console.log(`🌐 Network: http://127.0.0.1:${PORT}`);
   console.log(`🩺 Health: http://localhost:${PORT}/api/health`);
+  console.log(`🤖 AI Health: http://localhost:${PORT}/api/ai/health`);
 });
