@@ -63,7 +63,7 @@ function App() {
             <p className="text-6xl">Predict the Future of</p>
             <p className="text-6xl font-bold bg-linear-to-r from-purple-400 to-blue-500 bg-clip-text text-transparent">Crypto with AI</p>
             <p className="text-2xl">Our decentralized predictive engine analyzes real-time</p>
-            <p className="text-2xl">blockchain data using advanced neural networks to</p>
+            <p className="text-2xl">blockchain data using LTSM to</p>
             <p className="text-2xl">generate high-accuracy crypto insights.</p>
           </div>
           <div className="mt-6 ">

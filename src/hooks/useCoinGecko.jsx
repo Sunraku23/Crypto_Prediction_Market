@@ -46,8 +46,8 @@ export function useCoinGecko() {
     };
 
     fetchPrices();
-    // Refresh lebih jarang jika tanpa API key
-    const interval = setInterval(fetchPrices, 300000); // 5 menit
+    // Refresh Tanpa api
+    const interval = setInterval(fetchPrices, 30000); // 5 menit
     return () => clearInterval(interval);
   }, []);
 
